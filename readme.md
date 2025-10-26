@@ -2,6 +2,17 @@
 
 Este projeto é um **exemplo de loja funcional** desenvolvido como **trabalho da disciplina de Desenvolvimento em Python**, ministrada pelo professor **Daniel Xavier**.
 
+Alunos:
+
+- Daniel Sanjines.
+- Diego Gonçalves.
+- Guilherme Souza.
+- Henrique Luiz.
+- João Arnaldo.
+- Matheus Ernesto.
+- Pedro Henrique.
+
+
 O projeto utiliza:
 
 - **Banco de dados relacional:** SQLite
@@ -13,6 +24,7 @@ O projeto utiliza:
 ## Estrutura do Projeto
 
 projeto
+
 |
 
 ├─ api/ → Código da API (FastAPI)
