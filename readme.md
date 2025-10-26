@@ -13,7 +13,7 @@ O projeto utiliza:
 ## Estrutura do Projeto
 
 projeto
-+
+|
 
 ├─ api/ → Código da API (FastAPI)
 
