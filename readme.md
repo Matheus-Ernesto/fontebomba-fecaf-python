@@ -39,6 +39,8 @@ projeto
 - A API deve estar rodando para que o front-end funcione corretamente.
 - O banco SQLite (`.db`) está localizado na pasta `bd/`.
 
+---
+
 ## Como rodar
 
 - Para executar o servidor, rode o `uvicorn api:app --reload` dentro da pasta api.
