@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Conta</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-8 rounded shadow-md w-full max-w-md space-y-6">
+    <h1 class="text-2xl font-bold text-center">Minha Conta</h1>
+
+    <div>
+      <h2 class="font-semibold mb-2">Alterar Email</h2>
+      <input type="email" id="novoEmail" placeholder="Novo Email" class="w-full p-3 border rounded mb-2">
+      <button id="btnEmail" class="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700">Atualizar Email</button>
+    </div>
+
+    <div>
+      <h2 class="font-semibold mb-2">Alterar Senha</h2>
+      <input type="password" id="novaSenha" placeholder="Nova Senha" class="w-full p-3 border rounded mb-2">
+      <button id="btnSenha" class="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700">Atualizar Senha</button>
+    </div>
+
+    <p id="mensagem" class="text-center text-red-600"></p>
+  </div>
+
+  <script>
+    // Supomos que o usuário logado está salvo no localStorage
+    const usuario = JSON.parse(localStorage.getItem("usuario")); 
+    const mensagem = document.getElementById("mensagem");
+
+    document.getElementById("btnEmail").addEventListener("click", async () => {
+      const novo_email = document.getElementById("novoEmail").value;
+      if (!novo_email) return;
+      
+      try {
+        const resposta = await fetch("http://127.0.0.1:8000/conta/email", {
+          method: "PUT",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({id: usuario.id, novo_email})
+        });
+
+        const data = await resposta.json();
+        if (!resposta.ok) throw new Error(data.detail || "Erro");
+        mensagem.style.color = "green";
+        mensagem.textContent = data.mensagem;
+
+      } catch (err) {
+        mensagem.style.color = "red";
+        mensagem.textContent = err.message;
+      }
+    });
+
+    document.getElementById("btnSenha").addEventListener("click", async () => {
+      const nova_senha = document.getElementById("novaSenha").value;
+      if (!nova_senha) return;
+
+      try {
+        const resposta = await fetch("http://127.0.0.1:8000/conta/senha", {
+          method: "PUT",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({id: usuario.id, nova_senha})
+        });
+
+        const data = await resposta.json();
+        if (!resposta.ok) throw new Error(data.detail || "Erro");
+        mensagem.style.color = "green";
+        mensagem.textContent = data.mensagem;
+
+      } catch (err) {
+        mensagem.style.color = "red";
+        mensagem.textContent = err.message;
+      }
+    });
+  </script>
+
+</body>
+</html>

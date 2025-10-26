@@ -1,0 +1,25 @@
+Projeto
+
+
+Um exemplo de loja funcional com banco de dados relacional (sql lite), python (API) e Web.
+
+
+para Web:
+Recomenda-se o uso de Tailwind CSS para construção das páginas.
+- Index (Pagina principal)
+- login
+- conta
+- carrinho
+- compra
+
+para API:
+Recomenda-se o uso do FastAPI para hospedar um servidor de requisições RestFul (Json), que conecte por Sqlite no servidor.
+
+para bd (Banco de dados):
+Recomenda-se a utilização de SQL Workbench para projeção do diagrama de tabelas.
+- produtos
+- contas
+- compras
+- carrinhos
+
+o projeto ficará separado em três partes já com esqueleto feito.
