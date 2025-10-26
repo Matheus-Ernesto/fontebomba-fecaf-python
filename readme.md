@@ -13,9 +13,12 @@ O projeto utiliza:
 ## Estrutura do Projeto
 
 projeto
-│
++
+
 ├─ api/ → Código da API (FastAPI)
+
 ├─ bd/ → Scripts para criação e inserção no banco SQLite
+
 └─ web/ → Páginas Web (index, login, conta, carrinho, compra)
 
 
