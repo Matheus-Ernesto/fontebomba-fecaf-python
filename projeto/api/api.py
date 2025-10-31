@@ -1,13 +1,16 @@
+# projeto/api/api.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import sqlite3
 import os
 
-# Cria a app FastAPI
-app = FastAPI()
+# -----------------------------
+# CONFIGURAÇÃO BÁSICA
+# -----------------------------
+app = FastAPI(title="API Loja", version="1.0")
 
-# Configuração do CORS (libera o acesso do front-end)
+# CORS (libera acesso do front-end)
 origins = ["*"]  # pode restringir depois
 app.add_middleware(
     CORSMiddleware,
@@ -25,45 +28,41 @@ def conectar():
     return sqlite3.connect(DB_PATH)
 
 # -----------------------------
-# MODELO PARA LOGIN
+# MODELOS Pydantic
 # -----------------------------
 class Login(BaseModel):
     email: str
     senha: str
 
-# Modelo para atualização de email
 class AtualizarEmail(BaseModel):
     id: int
     novo_email: str
 
-# Modelo para atualização de senha
 class AtualizarSenha(BaseModel):
     id: int
     nova_senha: str
 
-# Modelo para adicionar/remover produto do carrinho
 class CarrinhoItem(BaseModel):
     usuario_id: int
     produto_id: int
     quantidade: int = 1
 
-
 # -----------------------------
-# ROTAS
+# ROTAS BÁSICAS
 # -----------------------------
 @app.get("/")
 def home():
-    return {"mensagem": "API da Loja funcionando!"}
+    return {"mensagem": "🛍️ API da Loja funcionando!"}
 
 @app.get("/produtos")
 def listar_produtos():
     con = conectar()
     cur = con.cursor()
-    cur.execute("SELECT * FROM produtos")
+    cur.execute("SELECT id, nome, preco, descricao, estoque FROM produtos")
     dados = cur.fetchall()
     con.close()
     return [
-        {"id": d[0], "nome": d[1], "preco": d[2], "estoque": d[3]}
+        {"id": d[0], "nome": d[1], "preco": d[2], "descricao": d[3], "estoque": d[4]}
         for d in dados
     ]
 
@@ -74,13 +73,10 @@ def listar_contas():
     cur.execute("SELECT id, nome, email FROM contas")
     dados = cur.fetchall()
     con.close()
-    return [
-        {"id": d[0], "nome": d[1], "email": d[2]}
-        for d in dados
-    ]
+    return [{"id": d[0], "nome": d[1], "email": d[2]} for d in dados]
 
 # -----------------------------
-# LOGIN
+# LOGIN E CONTA
 # -----------------------------
 @app.post("/login")
 def login(dados: Login):
@@ -124,41 +120,89 @@ def atualizar_senha(dados: AtualizarSenha):
     finally:
         con.close()
 
+# -----------------------------
+# CARRINHO
+# -----------------------------
 @app.get("/carrinho/{usuario_id}")
 def listar_carrinho(usuario_id: int):
     con = conectar()
     cur = con.cursor()
+
+    # Busca o carrinho do usuário
+    cur.execute("SELECT id FROM carrinhos WHERE conta_id = ?", (usuario_id,))
+    carrinho = cur.fetchone()
+    if not carrinho:
+        con.close()
+        return {"mensagem": "Carrinho vazio", "itens": []}
+
+    carrinho_id = carrinho[0]
+
+    # Busca produtos vinculados ao carrinho
     cur.execute("""
-        SELECT c.produto_id, p.nome, p.preco, c.quantidade
-        FROM carrinhos c
-        JOIN produtos p ON c.produto_id = p.id
-        WHERE c.usuario_id = ?
-    """, (usuario_id,))
+        SELECT p.id, p.nome, cp.preco, cp.quantidade
+        FROM carrinhos_produtos cp
+        JOIN produtos p ON cp.produto_id = p.id
+        WHERE cp.carrinho_id = ?
+    """, (carrinho_id,))
+
     itens = cur.fetchall()
     con.close()
-    return [
-        {"produto_id": i[0], "nome": i[1], "preco": i[2], "quantidade": i[3]}
-        for i in itens
-    ]
+
+    total = sum(i[2] * i[3] for i in itens)
+
+    return {
+        "carrinho_id": carrinho_id,
+        "total": total,
+        "itens": [
+            {"produto_id": i[0], "nome": i[1], "preco": i[2], "quantidade": i[3]}
+            for i in itens
+        ]
+    }
 
 @app.post("/carrinho")
 def adicionar_carrinho(item: CarrinhoItem):
     con = conectar()
     cur = con.cursor()
     try:
-        # Verifica se já existe o item no carrinho
-        cur.execute("SELECT quantidade FROM carrinhos WHERE usuario_id = ? AND produto_id = ?",
-                    (item.usuario_id, item.produto_id))
+        # Verifica se o usuário já tem carrinho
+        cur.execute("SELECT id FROM carrinhos WHERE conta_id = ?", (item.usuario_id,))
+        carrinho = cur.fetchone()
+
+        # Se não existir, cria um novo carrinho
+        if not carrinho:
+            cur.execute("INSERT INTO carrinhos (conta_id) VALUES (?)", (item.usuario_id,))
+            carrinho_id = cur.lastrowid
+        else:
+            carrinho_id = carrinho[0]
+
+        # Verifica se o produto já está no carrinho
+        cur.execute("""
+            SELECT quantidade FROM carrinhos_produtos
+            WHERE carrinho_id = ? AND produto_id = ?
+        """, (carrinho_id, item.produto_id))
         existente = cur.fetchone()
+
         if existente:
             nova_qtde = existente[0] + item.quantidade
-            cur.execute("UPDATE carrinhos SET quantidade = ? WHERE usuario_id = ? AND produto_id = ?",
-                        (nova_qtde, item.usuario_id, item.produto_id))
+            cur.execute("""
+                UPDATE carrinhos_produtos
+                SET quantidade = ?
+                WHERE carrinho_id = ? AND produto_id = ?
+            """, (nova_qtde, carrinho_id, item.produto_id))
         else:
-            cur.execute("INSERT INTO carrinhos (usuario_id, produto_id, quantidade) VALUES (?, ?, ?)",
-                        (item.usuario_id, item.produto_id, item.quantidade))
+            # Pega o preço atual do produto
+            cur.execute("SELECT preco FROM produtos WHERE id = ?", (item.produto_id,))
+            preco = cur.fetchone()[0]
+
+            # Insere o produto no carrinho
+            cur.execute("""
+                INSERT INTO carrinhos_produtos (carrinho_id, produto_id, quantidade, preco)
+                VALUES (?, ?, ?, ?)
+            """, (carrinho_id, item.produto_id, item.quantidade, preco))
+
         con.commit()
-        return {"mensagem": "Produto adicionado ao carrinho"}
+        return {"mensagem": "Produto adicionado ao carrinho", "carrinho_id": carrinho_id}
+
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -169,10 +213,23 @@ def remover_carrinho(item: CarrinhoItem):
     con = conectar()
     cur = con.cursor()
     try:
-        cur.execute("DELETE FROM carrinhos WHERE usuario_id = ? AND produto_id = ?",
-                    (item.usuario_id, item.produto_id))
+        # Pega o carrinho do usuário
+        cur.execute("SELECT id FROM carrinhos WHERE conta_id = ?", (item.usuario_id,))
+        carrinho = cur.fetchone()
+        if not carrinho:
+            raise HTTPException(status_code=404, detail="Carrinho não encontrado")
+
+        carrinho_id = carrinho[0]
+
+        # Remove o produto
+        cur.execute("""
+            DELETE FROM carrinhos_produtos
+            WHERE carrinho_id = ? AND produto_id = ?
+        """, (carrinho_id, item.produto_id))
+
         con.commit()
         return {"mensagem": "Produto removido do carrinho"}
+
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:

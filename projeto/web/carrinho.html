@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carrinho - Minha Loja</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 text-gray-900 min-h-screen">
 
   <header class="bg-white shadow-md p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold">🛒 Meu Carrinho</h1>
+    <h1 class="text-2xl font-bold">🛒 Carrinho de Matheus</h1>
     <a href="index.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Continuar Comprando</a>
   </header>
 
@@ -19,7 +21,8 @@
     </div>
     <div class="mt-6 text-right">
       <p id="total" class="font-bold text-xl"></p>
-      <button class="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Finalizar Compra</button>
+      <button id="finalizar" class="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Finalizar
+        Compra</button>
     </div>
   </main>
 
@@ -30,23 +33,26 @@
 
     async function carregarCarrinho() {
       try {
-        const resposta = await fetch(`http://127.0.0.1:8000/carrinho/${usuario.id}`);
-        const itens = await resposta.json();
+        const resposta = await fetch(`http://127.0.0.1:8000/carrinho/1`);
+        const dados = await resposta.json();
 
-        container.innerHTML = itens.map(i => `
-          <div class="bg-white p-4 rounded shadow flex justify-between items-center">
-            <div>
-              <h3 class="font-semibold text-lg">${i.nome}</h3>
-              <p>Preço: R$ ${i.preco.toFixed(2)} x ${i.quantidade}</p>
-            </div>
-            <button onclick="removerItem(${i.produto_id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Remover</button>
+        if (!dados.itens || dados.itens.length === 0) {
+          container.innerHTML = `<p class="text-gray-500 text-center">Seu carrinho está vazio.</p>`;
+          totalEl.textContent = "";
+          return;
+        }
+
+        container.innerHTML = dados.itens.map(i => `
+        <div class="bg-white p-4 rounded shadow flex justify-between items-center">
+          <div>
+            <h3 class="font-semibold text-lg">${i.nome}</h3>
+            <p>Preço: R$ ${i.preco.toFixed(2)} x ${i.quantidade}</p>
           </div>
-        `).join('');
+          <button onclick="removerItem(${i.produto_id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Remover</button>
+        </div>
+      `).join('');
 
-        // Calcula total
-        const total = itens.reduce((acc, i) => acc + i.preco * i.quantidade, 0);
-        totalEl.textContent = `Total: R$ ${total.toFixed(2)}`;
-
+        totalEl.textContent = `Total: R$ ${dados.total.toFixed(2)}`;
       } catch (err) {
         console.error("Erro ao carregar carrinho:", err);
       }
@@ -54,10 +60,10 @@
 
     async function removerItem(produto_id) {
       try {
-        await fetch("http://127.0.0.1:8000/carrinho", {
+        await fetch("http://127.0.0.1:8000/carrinho/1", {
           method: "DELETE",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({usuario_id: usuario.id, produto_id})
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usuario_id: 1, produto_id })
         });
         carregarCarrinho();
       } catch (err) {
@@ -68,5 +74,7 @@
     carregarCarrinho();
   </script>
 
+
 </body>
+
 </html>
