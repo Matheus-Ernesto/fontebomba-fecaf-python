@@ -10,7 +10,7 @@ Alunos:
 - Henrique Luiz.
 - João Arnaldo.
 - Matheus Ernesto.
-- Pedro Henrique.
+- Pedro Ribeiro.
 
 
 O projeto utiliza:
