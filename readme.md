@@ -4,12 +4,12 @@ Este projeto é um **exemplo de loja funcional** desenvolvido como **trabalho da
 
 Alunos:
 
-- Daniel Sanjines.
-- Diego Gonçalves.
+- Daniel Sanjines Lozano.
+- Diego Gonçalves dos Santos.
 - Guilherme Souza.
-- Henrique Luiz.
-- João Arnaldo.
-- Matheus Ernesto.
+- Henrique Luiz Ramos.
+- João Arnaldo Mariano.
+- Matheus Ernesto dos Santos.
 - Pedro Ribeiro.
 
 
