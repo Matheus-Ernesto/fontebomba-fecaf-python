@@ -28,25 +28,16 @@ CREATE TABLE IF NOT EXISTS produtos (
 )
 """)
 
-# Carrinhos
+# Itens do carrinho (1 carrinho por usuário, vários produtos)
 cur.execute("""
-CREATE TABLE IF NOT EXISTS carrinhos (
+CREATE TABLE IF NOT EXISTS carrinho_itens (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     conta_id INTEGER NOT NULL,
-    FOREIGN KEY(conta_id) REFERENCES contas(id)
-)
-""")
-
-# Relação carrinho-produto (N:N)
-cur.execute("""
-CREATE TABLE IF NOT EXISTS carrinhos_produtos (
-    carrinho_id INTEGER NOT NULL,
     produto_id INTEGER NOT NULL,
     quantidade INTEGER NOT NULL,
-    preco REAL NOT NULL,
-    FOREIGN KEY(carrinho_id) REFERENCES carrinhos(id),
-    FOREIGN KEY(produto_id) REFERENCES produtos(id),
-    PRIMARY KEY(carrinho_id, produto_id)
+    preco REAL NOT NULL,  -- preço congelado no momento em que adicionou ao carrinho
+    FOREIGN KEY(conta_id) REFERENCES contas(id),
+    FOREIGN KEY(produto_id) REFERENCES produtos(id)
 )
 """)
 

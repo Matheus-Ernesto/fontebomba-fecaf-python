@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Minha Loja</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 text-gray-900">
 
   <header class="bg-white shadow-md p-4 flex justify-between items-center">
-  <h1 class="text-2xl font-bold">🛍️ Minha Loja</h1>
-  <a href="carrinho.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-    Carrinho
-  </a>
-  <a href="login.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-    Login
-  </a>
-</header>
+    <h1 class="text-2xl font-bold">🛍️ Minha Loja</h1>
+    <a href="carrinho.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Carrinho
+    </a>
+    <a href="login.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Login
+    </a>
+  </header>
 
 
   <main class="max-w-6xl mx-auto mt-8 px-4">
@@ -31,6 +33,34 @@
   </footer>
 
   <script>
+    async function adicionarAoCarrinho(produto_id) {
+      // Pega o ID salvo do usuário
+      const usuarioId = localStorage.getItem("usuario_id");
+
+      // Caso o usuário não esteja logado
+      if (!usuarioId) {
+        alert("Você precisa estar logado para adicionar itens ao carrinho!");
+        window.location.href = "login.html";  // envia para a página de login
+        return;
+      }
+
+      try {
+        await fetch("http://127.0.0.1:8000/carrinho", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            usuario_id: Number(usuarioId),
+            produto_id: produto_id,
+            quantidade: 1
+          })
+        });
+
+        //alert("Produto adicionado ao carrinho!");
+      } catch (err) {
+        console.error("Erro ao adicionar ao carrinho:", err);
+      }
+    }
+
     async function carregarProdutos() {
       try {
         const resposta = await fetch('http://127.0.0.1:8000/produtos');
@@ -42,22 +72,24 @@
           "Headset": "images/headset.png"
         };
 
-      const container = document.getElementById('produtos');
-      container.innerHTML = produtos.map(p => {
-        const imagem = imagensProdutos[p.nome] 
-          || "https://dummyimage.com/400x400/a6a6a6/fff.png&text=Sem+imagem";
+        const container = document.getElementById('produtos');
+        container.innerHTML = produtos.map(p => {
+          const imagem = imagensProdutos[p.nome]
+            || "https://dummyimage.com/400x400/a6a6a6/fff.png&text=Sem+imagem";
 
-        return `
+          return `
           <div class="bg-white shadow rounded-lg overflow-hidden hover:scale-105 transition-transform">
             <img src="${imagem}" alt="${p.nome}" class="w-full h-48 object-cover">
             <div class="p-4">
               <h3 class="font-semibold text-lg mb-2">${p.nome}</h3>
               <p class="text-blue-600 font-bold text-xl">R$ ${p.preco.toFixed(2)}</p>
-              <button class="mt-3 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Comprar</button>
-            </div>
-          </div>
+              <button 
+                onclick="adicionarAoCarrinho(${p.id})" 
+                class="mt-3 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                Comprar
+              </button>
         `;
-      }).join('');
+        }).join('');
 
       } catch (err) {
         console.error('Erro ao carregar produtos:', err);
@@ -67,4 +99,5 @@
     carregarProdutos();
   </script>
 </body>
+
 </html>

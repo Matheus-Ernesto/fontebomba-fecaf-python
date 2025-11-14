@@ -131,30 +131,22 @@ def listar_carrinho(usuario_id: int):
     con = conectar()
     cur = con.cursor()
 
-    # Busca o carrinho do usuário
-    cur.execute("SELECT id FROM carrinhos WHERE conta_id = ?", (usuario_id,))
-    carrinho = cur.fetchone()
-    if not carrinho:
-        con.close()
-        return {"mensagem": "Carrinho vazio", "itens": []}
-
-    carrinho_id = carrinho[0]
-
-    # Busca produtos vinculados ao carrinho
     cur.execute("""
-        SELECT p.id, p.nome, cp.preco, cp.quantidade
-        FROM carrinhos_produtos cp
-        JOIN produtos p ON cp.produto_id = p.id
-        WHERE cp.carrinho_id = ?
-    """, (carrinho_id,))
+        SELECT ci.produto_id, p.nome, ci.preco, ci.quantidade
+        FROM carrinho_itens ci
+        JOIN produtos p ON ci.produto_id = p.id
+        WHERE ci.conta_id = ?
+    """, (usuario_id,))
 
     itens = cur.fetchall()
     con.close()
 
+    if not itens:
+        return {"mensagem": "Carrinho vazio", "itens": []}
+
     total = sum(i[2] * i[3] for i in itens)
 
     return {
-        "carrinho_id": carrinho_id,
         "total": total,
         "itens": [
             {"produto_id": i[0], "nome": i[1], "preco": i[2], "quantidade": i[3]}
@@ -162,49 +154,42 @@ def listar_carrinho(usuario_id: int):
         ]
     }
 
+
 @app.post("/carrinho")
 def adicionar_carrinho(item: CarrinhoItem):
     con = conectar()
     cur = con.cursor()
     try:
-        # Verifica se o usuário já tem carrinho
-        cur.execute("SELECT id FROM carrinhos WHERE conta_id = ?", (item.usuario_id,))
-        carrinho = cur.fetchone()
-
-        # Se não existir, cria um novo carrinho
-        if not carrinho:
-            cur.execute("INSERT INTO carrinhos (conta_id) VALUES (?)", (item.usuario_id,))
-            carrinho_id = cur.lastrowid
-        else:
-            carrinho_id = carrinho[0]
-
-        # Verifica se o produto já está no carrinho
+        # Verifica se o item já existe no carrinho
         cur.execute("""
-            SELECT quantidade FROM carrinhos_produtos
-            WHERE carrinho_id = ? AND produto_id = ?
-        """, (carrinho_id, item.produto_id))
+            SELECT quantidade FROM carrinho_itens
+            WHERE conta_id = ? AND produto_id = ?
+        """, (item.usuario_id, item.produto_id))
         existente = cur.fetchone()
 
         if existente:
             nova_qtde = existente[0] + item.quantidade
             cur.execute("""
-                UPDATE carrinhos_produtos
+                UPDATE carrinho_itens
                 SET quantidade = ?
-                WHERE carrinho_id = ? AND produto_id = ?
-            """, (nova_qtde, carrinho_id, item.produto_id))
+                WHERE conta_id = ? AND produto_id = ?
+            """, (nova_qtde, item.usuario_id, item.produto_id))
         else:
-            # Pega o preço atual do produto
+            # Obtém o preço atual
             cur.execute("SELECT preco FROM produtos WHERE id = ?", (item.produto_id,))
-            preco = cur.fetchone()[0]
+            preco = cur.fetchone()
+            if not preco:
+                raise HTTPException(status_code=404, detail="Produto não encontrado")
+            preco = preco[0]
 
-            # Insere o produto no carrinho
+            # Insere no carrinho
             cur.execute("""
-                INSERT INTO carrinhos_produtos (carrinho_id, produto_id, quantidade, preco)
+                INSERT INTO carrinho_itens (conta_id, produto_id, quantidade, preco)
                 VALUES (?, ?, ?, ?)
-            """, (carrinho_id, item.produto_id, item.quantidade, preco))
+            """, (item.usuario_id, item.produto_id, item.quantidade, preco))
 
         con.commit()
-        return {"mensagem": "Produto adicionado ao carrinho", "carrinho_id": carrinho_id}
+        return {"mensagem": "Produto adicionado ao carrinho!"}
 
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -215,28 +200,47 @@ def adicionar_carrinho(item: CarrinhoItem):
 def remover_carrinho(item: CarrinhoItem):
     con = conectar()
     cur = con.cursor()
+
     try:
-        # Pega o carrinho do usuário
-        cur.execute("SELECT id FROM carrinhos WHERE conta_id = ?", (item.usuario_id,))
-        carrinho = cur.fetchone()
-        if not carrinho:
-            raise HTTPException(status_code=404, detail="Carrinho não encontrado")
-
-        carrinho_id = carrinho[0]
-
-        # Remove o produto
+        # 1. Buscar quantidade atual
         cur.execute("""
-            DELETE FROM carrinhos_produtos
-            WHERE carrinho_id = ? AND produto_id = ?
-        """, (carrinho_id, item.produto_id))
+            SELECT quantidade FROM carrinho_itens
+            WHERE conta_id = ? AND produto_id = ?
+        """, (item.usuario_id, item.produto_id))
+
+        resultado = cur.fetchone()
+
+        if not resultado:
+            raise HTTPException(status_code=404, detail="Item não está no carrinho!")
+
+        quantidade_atual = resultado[0]
+
+        # 2. Se quantidade > 1 → diminuir
+        if quantidade_atual > 1:
+            cur.execute("""
+                UPDATE carrinho_itens
+                SET quantidade = quantidade - 1
+                WHERE conta_id = ? AND produto_id = ?
+            """, (item.usuario_id, item.produto_id))
+
+            con.commit()
+            return {"mensagem": "Quantidade reduzida!"}
+
+        # 3. Se quantidade == 1 → remover item
+        cur.execute("""
+            DELETE FROM carrinho_itens
+            WHERE conta_id = ? AND produto_id = ?
+        """, (item.usuario_id, item.produto_id))
 
         con.commit()
-        return {"mensagem": "Produto removido do carrinho"}
+        return {"mensagem": "Item removido do carrinho!"}
 
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
+
     finally:
         con.close()
+
 
 # -----------------------------
 # MAIN

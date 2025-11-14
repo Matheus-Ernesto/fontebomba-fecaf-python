@@ -12,29 +12,41 @@
 
   <header class="bg-white shadow-md p-4 flex justify-between items-center">
     <h1 class="text-2xl font-bold">🛒 Carrinho</h1>
-    <a href="index.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Continuar Comprando</a>
+    <a href="index.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Continuar Comprando
+    </a>
   </header>
 
   <main class="max-w-4xl mx-auto mt-8 px-4">
-    <div id="carrinho" class="space-y-4">
-      <!-- Produtos do carrinho serão carregados aqui -->
-    </div>
+    <div id="carrinho" class="space-y-4"></div>
+
     <div class="mt-6 text-right">
       <p id="total" class="font-bold text-xl"></p>
-      <button id="finalizar" class="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Finalizar
-        Compra</button>
+      <button id="finalizar" class="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        Finalizar Compra
+      </button>
     </div>
   </main>
 
   <script>
-    const usuario = JSON.parse(localStorage.getItem("usuario")); // usuário logado
+    // verifica se o usuário está logado
+    const usuario = localStorage.getItem("usuario_id");
+
+    if (!usuario) {
+      alert("Você precisa estar logado para acessar o carrinho!");
+      window.location.href = "login.html";
+    }
+
     const container = document.getElementById("carrinho");
     const totalEl = document.getElementById("total");
 
     async function carregarCarrinho() {
       try {
-        const resposta = await fetch(`http://127.0.0.1:8000/carrinho/1`);
+        // usuário já É o ID
+        const resposta = await fetch(`http://127.0.0.1:8000/carrinho/${usuario}`);
         const dados = await resposta.json();
+
+        console.log(dados); // debug opcional
 
         if (!dados.itens || dados.itens.length === 0) {
           container.innerHTML = `<p class="text-gray-500 text-center">Seu carrinho está vazio.</p>`;
@@ -43,37 +55,47 @@
         }
 
         container.innerHTML = dados.itens.map(i => `
-        <div class="bg-white p-4 rounded shadow flex justify-between items-center">
-          <div>
-            <h3 class="font-semibold text-lg">${i.nome}</h3>
-            <p>Preço: R$ ${i.preco.toFixed(2)} x ${i.quantidade}</p>
-          </div>
-          <button onclick="removerItem(${i.produto_id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Remover</button>
+      <div class="bg-white p-4 rounded shadow flex justify-between items-center">
+        <div>
+          <h3 class="font-semibold text-lg">${i.nome}</h3>
+          <p>Preço: R$ ${i.preco.toFixed(2)} x ${i.quantidade}</p>
         </div>
-      `).join('');
+        <button 
+          onclick="removerItem(${i.produto_id})" 
+          class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+          Remover
+        </button>
+      </div>
+    `).join('');
 
         totalEl.textContent = `Total: R$ ${dados.total.toFixed(2)}`;
+
       } catch (err) {
         console.error("Erro ao carregar carrinho:", err);
       }
     }
 
+
     async function removerItem(produto_id) {
       try {
-        await fetch("http://127.0.0.1:8000/carrinho/1", {
+        await fetch("http://127.0.0.1:8000/carrinho", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ usuario_id: 1, produto_id })
+          body: JSON.stringify({
+            usuario_id: usuario,
+            produto_id: produto_id
+          })
         });
+
         carregarCarrinho();
       } catch (err) {
         console.error("Erro ao remover item:", err);
       }
     }
 
+
     carregarCarrinho();
   </script>
-
 
 </body>
 

@@ -17,7 +17,7 @@ VALUES (?, ?, ?)
     ("Pedro", "pedro@email.com", "456")
 ])
 
-# Inserir produtos (ordem correta: nome, preco, descricao, estoque)
+# Inserir produtos
 cur.executemany("""
 INSERT INTO produtos (nome, preco, descricao, estoque)
 VALUES (?, ?, ?, ?)
@@ -31,13 +31,6 @@ VALUES (?, ?, ?, ?)
 cur.execute("SELECT id FROM contas WHERE nome = ?", ("Matheus",))
 matheus_id = cur.fetchone()[0]
 
-# Criar um carrinho para o Matheus
-cur.execute("""
-INSERT INTO carrinhos (conta_id)
-VALUES (?)
-""", (matheus_id,))
-carrinho_id = cur.lastrowid  # pega o ID do carrinho recém-criado
-
 # Buscar IDs dos produtos
 cur.execute("SELECT id FROM produtos WHERE nome = 'Mouse Gamer'")
 mouse_id = cur.fetchone()[0]
@@ -45,16 +38,17 @@ mouse_id = cur.fetchone()[0]
 cur.execute("SELECT id FROM produtos WHERE nome = 'Headset'")
 headset_id = cur.fetchone()[0]
 
-# Inserir produtos no carrinho do Matheus
+# Inserir itens no carrinho do Matheus
 cur.executemany("""
-INSERT INTO carrinhos_produtos (carrinho_id, produto_id, quantidade, preco)
+INSERT INTO carrinho_itens (conta_id, produto_id, quantidade, preco)
 VALUES (?, ?, ?, ?)
 """, [
-    (carrinho_id, mouse_id, 1, 99.90),
-    (carrinho_id, headset_id, 2, 149.90)
+    (matheus_id, mouse_id, 1, 99.90),
+    (matheus_id, headset_id, 2, 149.90)
 ])
 
 con.commit()
 con.close()
+
 print("✅ Dados inseridos no banco:", DB_PATH)
-print(f"🛒 Carrinho de Matheus criado (id: {carrinho_id}) com 2 produtos.")
+print("🛒 Carrinho de Matheus criado com 2 produtos.")
