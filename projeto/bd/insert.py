@@ -14,7 +14,8 @@ INSERT INTO contas (nome, email, senha)
 VALUES (?, ?, ?)
 """, [
     ("Matheus", "matheus@email.com", "1234"),
-    ("Ana", "ana@email.com", "4321")
+    ("Ana", "ana@email.com", "4321"),
+    ("Pedro", "pedro@email.com", "sorvete")
 ])
 
 # Inserir produtos (ordem correta: nome, preco, descricao, estoque)
