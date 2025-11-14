@@ -13,7 +13,8 @@ cur.executemany("""
 INSERT INTO contas (nome, email, senha)
 VALUES (?, ?, ?)
 """, [
-    ("Pedro", "pedro@email.com", "sorvete")
+    ("Matheus", "matheus@email.com", "123"),
+    ("Pedro", "pedro@email.com", "456")
 ])
 
 # Inserir produtos (ordem correta: nome, preco, descricao, estoque)
@@ -21,9 +22,9 @@ cur.executemany("""
 INSERT INTO produtos (nome, preco, descricao, estoque)
 VALUES (?, ?, ?, ?)
 """, [
-    ("Mouse Gamer", 99.90, "Mouse gamer RGB com 6 botões", 10),
+    ("Mouse Gamer", 99.90, "Mouse gamer", 10),
     ("Teclado Mecânico", 199.90, "Teclado mecânico com switches blue", 5),
-    ("Headset RGB", 149.90, "Headset com som 7.1 e microfone retrátil", 7)
+    ("Headset", 149.90, "Headset com som 7.1 e microfone retrátil", 7)
 ])
 
 # Buscar ID do usuário "Matheus"
@@ -41,7 +42,7 @@ carrinho_id = cur.lastrowid  # pega o ID do carrinho recém-criado
 cur.execute("SELECT id FROM produtos WHERE nome = 'Mouse Gamer'")
 mouse_id = cur.fetchone()[0]
 
-cur.execute("SELECT id FROM produtos WHERE nome = 'Headset RGB'")
+cur.execute("SELECT id FROM produtos WHERE nome = 'Headset'")
 headset_id = cur.fetchone()[0]
 
 # Inserir produtos no carrinho do Matheus
