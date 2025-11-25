@@ -1,3 +1,23 @@
+async function atualizarContadorCarrinho() {
+    try {
+        const response = await fetch('/carrinho');
+        const data = await response.json();
+        
+        const totalItens = data.produtos ? data.produtos.length : 0;
+        
+        const badge = document.getElementById('cart-count');
+        if (badge) {
+            badge.textContent = totalItens;
+            badge.style.display = totalItens > 0 ? 'inline' : 'none';
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar contador:', error);
+    }
+}
+
+// Atualiza ao carregar a página
+document.addEventListener('DOMContentLoaded', atualizarContadorCarrinho);
+
 function formatPrice(price) {
     return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
