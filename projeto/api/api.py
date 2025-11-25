@@ -61,11 +61,11 @@ def home():
 def listar_produtos():
     con = conectar()
     cur = con.cursor()
-    cur.execute("SELECT id, nome, preco, descricao, estoque FROM produtos")
+    cur.execute("SELECT id, nome, preco, descricao, estoque, imagem FROM produtos")
     dados = cur.fetchall()
     con.close()
     return [
-        {"id": d[0], "nome": d[1], "preco": d[2], "descricao": d[3], "estoque": d[4]}
+        {"id": d[0], "nome": d[1], "preco": d[2], "descricao": d[3], "estoque": d[4], "imagem": d[5]}
         for d in dados
     ]
 

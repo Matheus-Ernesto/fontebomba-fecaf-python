@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS produtos (
     nome TEXT NOT NULL,
     preco REAL NOT NULL,
     descricao TEXT NOT NULL,
-    estoque INTEGER NOT NULL
+    estoque INTEGER NOT NULL,
+    imagem TEXT NOT NULL
 )
 """)
 
