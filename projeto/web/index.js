@@ -4,13 +4,13 @@ function formatPrice(price) {
 
 
 function createProductCard(product) {
-
     return `
-             <div class="product-card">
-                    <img src="${product.imagem}" alt="${product.nome}" class="product-image">
-                    <h3 class="product-title">${product.nome}</h3>
-                    <div class="product-price">${formatPrice(product.preco)}</div>
-                </div>
+        <div class="product-card"
+             onclick="window.location.href='produto.html?id=${product.id}'">
+            <img src="${product.imagem}" alt="${product.nome}" class="product-image">
+            <h3 class="product-title">${product.nome}</h3>
+            <div class="product-price">${formatPrice(product.preco)}</div>
+        </div>
     `
 }
 
