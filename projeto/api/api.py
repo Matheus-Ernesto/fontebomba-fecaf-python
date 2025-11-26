@@ -132,7 +132,7 @@ def listar_carrinho(usuario_id: int):
     cur = con.cursor()
 
     cur.execute("""
-        SELECT ci.produto_id, p.nome, ci.preco, ci.quantidade
+        SELECT ci.produto_id, p.nome, ci.preco, ci.quantidade, p.imagem
         FROM carrinho_itens ci
         JOIN produtos p ON ci.produto_id = p.id
         WHERE ci.conta_id = ?
@@ -149,7 +149,7 @@ def listar_carrinho(usuario_id: int):
     return {
         "total": total,
         "itens": [
-            {"produto_id": i[0], "nome": i[1], "preco": i[2], "quantidade": i[3]}
+            {"produto_id": i[0], "nome": i[1], "preco": i[2], "quantidade": i[3], "imagem": i[4]}
             for i in itens
         ]
     }

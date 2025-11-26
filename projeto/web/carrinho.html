@@ -33,16 +33,16 @@
     </div>
   </header>
 
-  <main class="max-w-4xl mx-auto mt-8 px-4">
-    <div id="carrinho" class="space-y-4"></div>
+  <main>
+    <div id="carrinho"></div>
 
-    <div class="mt-6 text-right">
-      <p id="total" class="font-bold text-xl"></p>
-      <button id="finalizar" class="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-        Finalizar Compra
-      </button>
-    </div>
+    <aside>
+      <h2>Resumo do Pedido</h2>
+      <p id="total"></p>
+      <button id="finalizar">Finalizar Compra</button>
+    </aside>
   </main>
+
 
   <footer class="footer" style="margin-top: 50vh;">
     <p>TODOS OS DIREITOS RESERVADOS - COPYRIGHT - 2025</p>
@@ -75,18 +75,22 @@
         }
 
         container.innerHTML = dados.itens.map(i => `
-      <div class="bg-white p-4 rounded shadow flex justify-between items-center">
-        <div>
-          <h3 class="font-semibold text-lg">${i.nome}</h3>
-          <p>Preço: R$ ${i.preco.toFixed(2)} x ${i.quantidade}</p>
-        </div>
-        <button 
-          onclick="removerItem(${i.produto_id})" 
-          class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
-          Remover
-        </button>
-      </div>
-    `).join('');
+          <div class="item-card">
+
+            <img src="${i.imagem || 'images/no-image.png'}">
+
+            <div class="item-info">
+              <h3>${i.nome}</h3>
+              <p>Preço: <strong>R$ ${i.preco.toFixed(2)}</strong></p>
+              <p>Quantidade: ${i.quantidade}</p>
+
+              <div class="buttons">
+                <button class="btn btn-rem" onclick="removerItem(${i.produto_id})">Remover Tudo</button>
+              </div>
+            </div>
+
+          </div>
+        `).join('');
 
         totalEl.textContent = `Total: R$ ${dados.total.toFixed(2)}`;
 
@@ -95,6 +99,10 @@
       }
     }
 
+    async function alterarQuantidade(produto_id, acao) {
+      await fetch(`/carrinho/${acao}/${produto_id}`, { method: "PUT" });
+      carregarCarrinho();
+    }
 
     async function removerItem(produto_id) {
       try {
@@ -116,6 +124,137 @@
 
     carregarCarrinho();
   </script>
+  <style>
+    body {
+      background: #f3f3f3;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 40px auto;
+      display: flex;
+      gap: 30px;
+      padding: 0 20px;
+    }
+
+    /* CONTAINER DOS ITENS */
+    #carrinho {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .item-card {
+      background: white;
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      align-items: center;
+    }
+
+    .item-card img {
+      width: 110px;
+      height: 110px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+
+    .item-info h3 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .item-info p {
+      margin: 3px 0;
+      color: #444;
+    }
+
+    /* BOTÕES DO ITEM */
+    .buttons {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .btn-add {
+      background: #1d73e8;
+      color: white;
+    }
+
+    .btn-add:hover {
+      background: #145fbb;
+    }
+
+    .btn-sub {
+      background: #ffb400;
+      color: white;
+    }
+
+    .btn-sub:hover {
+      background: #e69e00;
+    }
+
+    .btn-rem {
+      background: #e63946;
+      color: white;
+    }
+
+    .btn-rem:hover {
+      background: #c62839;
+    }
+
+    /* RESUMO */
+    aside {
+      width: 300px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      height: fit-content;
+    }
+
+    aside h2 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    #total {
+      font-size: 26px;
+      color: #2a9d8f;
+      margin-bottom: 20px;
+    }
+
+    #finalizar {
+      width: 100%;
+      padding: 12px;
+      background: #2a9d8f;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 18px;
+    }
+
+    #finalizar:hover {
+      background: #1f7c71;
+    }
+  </style>
 
 </body>
 
