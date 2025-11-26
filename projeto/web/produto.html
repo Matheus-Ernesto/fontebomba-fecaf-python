@@ -1,24 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhe do Produto - TechStar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header class="header">
         <div class="container">
-            <a href="index.html" class="logo-link">
-                <img src="images/TechStar.png" alt="TechStar" class="logo">
-            </a>
+            <div class="search-container">
+                <img alt="TechStar" class="logo" src="images/TechStar.png">
+                <nav>
+                    <a href="index.html" class="cart-link">
+                        🛒 Página principal
+                        <span id="cart-count" class="cart-badge">0</span>
+                    </a>
+                </nav>
+                <nav>
+                    <a href="carrinho.html" class="cart-link">
+                        🛒 Carrinho
+                        <span id="cart-count" class="cart-badge">0</span>
+                    </a>
+                </nav>
+                <nav>
+                    <a href="login.html" class="cart-link">
+                        👤 Login
+                        <span id="cart-count" class="cart-badge">0</span>
+                    </a>
+                </nav>
+            </div>
         </div>
-        <nav>
-            <a href="carrinho.html" class="cart-link">
-                🛒 Carrinho 
-                <span id="cart-count" class="cart-badge">0</span>
-            </a>
-        </nav>
     </header>
 
     <main class="container" style="margin-top: 40px;">
@@ -27,4 +44,5 @@
 
     <script src="produto.js"></script>
 </body>
+
 </html>

@@ -5,11 +5,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Minha Loja</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center h-screen">
-
+  <header class="header">
+    <div class="container">
+      <div class="search-container">
+        <img alt="TechStar" class="logo" src="images/TechStar.png">
+        <nav>
+          <a href="index.html" class="cart-link">
+            🛒 Página principal
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
+        </nav>
+        <nav>
+          <a href="carrinho.html" class="cart-link">
+            🛒 Carrinho
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
   <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
     <h1 class="text-2xl font-bold mb-6 text-center">Login</h1>
 

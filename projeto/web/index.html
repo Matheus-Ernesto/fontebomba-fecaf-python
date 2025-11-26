@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -15,20 +15,27 @@
     <header class="header">
         <div class="container">
             <div class="search-container">
-                <img alt="TechStar" class="logo"
-                    src="images/TechStar.png">
-                <input type="text" id="searchInput" placeholder="Buscar produtos... " class="search-input">
-                <button id="searchBtn" class="search-btn">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
+                <img alt="TechStar" class="logo" src="images/TechStar.png">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Buscar produtos... " class="search-input">
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+                <nav>
+                    <a href="carrinho.html" class="cart-link">
+                        🛒 Carrinho
+                        <span id="cart-count" class="cart-badge">0</span>
+                    </a>
+                </nav>
+                <nav>
+                    <a href="login.html" class="cart-link">
+                        👤 Login
+                        <span id="cart-count" class="cart-badge">0</span>
+                    </a>
+                </nav>
             </div>
         </div>
-        <nav>
-            <a href="carrinho.html" class="cart-link">
-                🛒 Carrinho 
-                <span id="cart-count" class="cart-badge">0</span>
-            </a>
-        </nav>
     </header>
     <section class="hero">
 
