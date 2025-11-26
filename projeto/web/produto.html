@@ -39,10 +39,106 @@
     </header>
 
     <main class="container" style="margin-top: 40px;">
-        <div id="productDetail"></div>
+        <div id="productDetail" class="product-detail">
+
+            <!-- IMAGEM DO PRODUTO -->
+            <img id="produto-img" class="imagem_do_produto" src="" alt="">
+
+            <!-- COLUNA DA DIREITA (nome, preço, descrição, estoque, botões) -->
+            <div class="product-info">
+
+                <h1 id="produto-nome"></h1>
+                <p id="produto-preco" class="product-price"></p>
+                <p id="produto-descricao"></p>
+                <p id="produto-estoque"></p>
+
+                <div class="product-buttons">
+                    <button id="btnAddCart">Adicionar ao carrinho</button>
+                    <button onclick="window.location.href='index.html'">Voltar</button>
+                </div>
+
+            </div>
+
+        </div>
     </main>
+
+    <footer class="footer">
+        <p>TODOS OS DIREITOS RESERVADOS - COPYRIGHT - 2025</p>
+    </footer>
 
     <script src="produto.js"></script>
 </body>
+<style>
+    /* --- Layout principal do detalhe --- */
+    .product-detail {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+        background: #ffffff;
+        border-radius: 8px;
+    }
+
+    /* Área da imagem */
+    .product-detail .imagem_do_produto {
+        width: auto;
+        max-width: auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        background: #fafafa;
+    }
+
+    /* Área de informações */
+    .product-detail h1 {
+        font-size: 26px;
+        margin-bottom: 10px;
+    }
+
+    .product-detail p {
+        margin: 6px 0;
+    }
+
+    .product-price {
+        padding-top: 10vh;
+        font-size: 72px;
+        font-weight: bold;
+        color: #ff6b00;
+        /* estilo kabum */
+    }
+
+    /* --- Botões estilo KaBuM --- */
+    #btnAddCart {
+        background-color: #ff6b00;
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+
+    #btnAddCart:hover {
+        background-color: #e45f00;
+    }
+
+    button {
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    /* Botão Voltar */
+    button:nth-child(2) {
+        background: #e0e0e0;
+        color: black;
+        font-weight: bold;
+    }
+
+    button:nth-child(2):hover {
+        background: #c9c9c9;
+    }
+</style>
 
 </html>
