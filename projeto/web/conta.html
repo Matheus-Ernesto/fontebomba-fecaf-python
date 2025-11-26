@@ -5,39 +5,169 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Minha Conta</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      background: #f3f3f3;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+
+    .container-center {
+      display: flex;
+      justify-content: center;
+      margin-top: 110px;
+      margin-bottom: 80px;
+    }
+
+    .box {
+      background: #fff;
+      width: 420px;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      animation: fadein 0.4s ease-in-out;
+    }
+
+    @keyframes fadein {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+      font-size: 26px;
+    }
+
+    h2 {
+      font-size: 17px;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: #ff6b00;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+      outline: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      transition: 0.2s ease;
+      margin-bottom: 20px;
+    }
+
+    .btn-blue {
+      background: #ff6b00;
+      color: white;
+    }
+
+    .btn-blue:hover {
+      background: #8b3a00;
+    }
+
+    .btn-green {
+      background: #ffa15f;
+      color: white;
+    }
+
+    .btn-green:hover {
+      background: #885632;
+    }
+
+    #mensagem {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+
 </head>
 
-<body class="bg-gray-100 text-gray-900 flex items-center justify-center min-h-screen">
+<body>
 
-  <div class="bg-white p-8 rounded shadow-md w-full max-w-md space-y-6">
-    <h1 class="text-2xl font-bold text-center">Minha Conta</h1>
-
-    <div>
-      <h2 class="font-semibold mb-2">Alterar Email</h2>
-      <input type="email" id="novoEmail" placeholder="Novo Email" class="w-full p-3 border rounded mb-2">
-      <button id="btnEmail" class="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700">
-        Atualizar Email
-      </button>
+  <header class="header">
+    <div class="container">
+      <div class="search-container">
+        <img alt="TechStar" class="logo" src="images/TechStar.png">
+        <nav>
+          <a href="index.html" class="cart-link">
+            🛒 Página principal
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
+        </nav>
+        <nav>
+          <a href="carrinho.html" class="cart-link">
+            🛒 Carrinho
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
+        </nav>
+        <nav>
+          <a href="login.html" class="cart-link">
+            👤 Login
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
+        </nav>
+      </div>
     </div>
+  </header>
 
-    <div>
-      <h2 class="font-semibold mb-2">Alterar Senha</h2>
-      <input type="password" id="novaSenha" placeholder="Nova Senha" class="w-full p-3 border rounded mb-2">
-      <button id="btnSenha" class="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700">
-        Atualizar Senha
-      </button>
+  <div class="container-center">
+    <div class="box">
+      <h1>Minha Conta</h1>
+
+      <!-- Atualizar Email -->
+      <div>
+        <h2>Alterar Email</h2>
+        <input type="email" id="novoEmail" placeholder="Novo Email" class="input-field">
+        <button id="btnEmail" class="btn btn-blue">Atualizar Email</button>
+      </div>
+
+      <!-- Atualizar Senha -->
+      <div>
+        <h2>Alterar Senha</h2>
+        <input type="password" id="novaSenha" placeholder="Nova Senha" class="input-field">
+        <button id="btnSenha" class="btn btn-green">Atualizar Senha</button>
+      </div>
+
+      <p id="mensagem"></p>
     </div>
-
-    <p id="mensagem" class="text-center text-red-600"></p>
   </div>
 
-  <script>
+  <footer class="footer" style="margin-top: 20vh;">
+    <p>TODOS OS DIREITOS RESERVADOS - COPYRIGHT - 2025</p>
+  </footer>
 
-    // 📌 Verifica login (se não tiver ID do usuário → volta pro login)
+  <script>
+    // Verifica se o usuário está logado
     const usuarioId = localStorage.getItem("usuario_id");
     if (!usuarioId) {
       window.location.href = "login.html";
@@ -45,9 +175,6 @@
 
     const mensagem = document.getElementById("mensagem");
 
-    // ==========================
-    //     Atualizar Email
-    // ==========================
     document.getElementById("btnEmail").addEventListener("click", async () => {
       const novo_email = document.getElementById("novoEmail").value;
 
@@ -77,9 +204,7 @@
       }
     });
 
-    // ==========================
-    //     Atualizar Senha
-    // ==========================
+
     document.getElementById("btnSenha").addEventListener("click", async () => {
       const nova_senha = document.getElementById("novaSenha").value;
 

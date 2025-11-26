@@ -4,50 +4,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Minha Loja</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>Login - TechStar</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      background: #f3f3f3;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 120px;
+      margin-bottom: 60px;
+    }
+
+    .login-box {
+      background: white;
+      width: 380px;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      animation: fadein 0.4s ease-in-out;
+    }
+
+    @keyframes fadein {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      transition: 0.2s;
+      font-size: 15px;
+    }
+
+    .input-field:focus {
+      border-color: #ff6b00;
+      box-shadow: 0 0 5px rgba(211, 103, 1, 0.4);
+      outline: none;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: #ff6b00;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .btn-login:hover {
+      background: #863800;
+    }
+
+    #mensagem {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  </style>
+
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body>
+
+  <!-- Cabeçalho -->
   <header class="header">
     <div class="container">
       <div class="search-container">
         <img alt="TechStar" class="logo" src="images/TechStar.png">
+
         <nav>
-          <a href="index.html" class="cart-link">
-            🛒 Página principal
-            <span id="cart-count" class="cart-badge">0</span>
-          </a>
+          <a href="index.html" class="cart-link">🛒 Página principal</a>
         </nav>
         <nav>
-          <a href="carrinho.html" class="cart-link">
-            🛒 Carrinho
-            <span id="cart-count" class="cart-badge">0</span>
-          </a>
+          <a href="carrinho.html" class="cart-link">🛒 Carrinho</a>
+        </nav>
+        <nav>
+          <a href="conta.html" class="cart-link">👤 Conta</a>
         </nav>
       </div>
     </div>
   </header>
-  <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
-    <h1 class="text-2xl font-bold mb-6 text-center">Login</h1>
 
-    <form id="formLogin" class="space-y-4">
-      <input type="email" id="email" placeholder="Email" class="w-full p-3 border rounded">
-      <input type="password" id="senha" placeholder="Senha" class="w-full p-3 border rounded">
-      <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700">Entrar</button>
-    </form>
+  <!-- Tela de Login -->
+  <div class="login-container">
+    <div class="login-box">
+      <h1 class="login-title">Entrar na sua conta</h1>
 
-    <p id="mensagem" class="mt-4 text-red-600 text-center"></p>
+      <form id="formLogin">
+        <input type="email" id="email" placeholder="Seu email" class="input-field">
+        <input type="password" id="senha" placeholder="Sua senha" class="input-field">
+        <button type="submit" class="btn-login">Entrar</button>
+      </form>
+
+      <p id="mensagem"></p>
+    </div>
   </div>
 
-  <footer class="footer" style="margin-top: 60vh;">
+  <!-- Rodapé -->
+  <footer class="footer" style="margin-top: 30vh;">
     <p>TODOS OS DIREITOS RESERVADOS - COPYRIGHT - 2025</p>
   </footer>
 
-
+  <!-- SCRIPT -->
   <script>
     const form = document.getElementById("formLogin");
     const mensagem = document.getElementById("mensagem");
@@ -67,6 +154,7 @@
 
         if (!resposta.ok) {
           const erro = await resposta.json();
+          mensagem.style.color = "red";
           mensagem.textContent = erro.detail;
           return;
         }
@@ -78,15 +166,17 @@
         mensagem.style.color = "green";
         mensagem.textContent = `Olá, ${usuario.nome}! Login realizado com sucesso.`;
 
-        // Aqui você poderia redirecionar para a página principal
-        window.location.href = "conta.html";
+        setTimeout(() => {
+          window.location.href = "conta.html";
+        }, 1200);
 
       } catch (err) {
+        mensagem.style.color = "red";
         mensagem.textContent = "Erro ao conectar com o servidor.";
-        console.error(err);
       }
     });
   </script>
+
 </body>
 
 </html>
